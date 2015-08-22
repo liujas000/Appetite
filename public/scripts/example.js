@@ -3,6 +3,69 @@ var data = [
   {author: "Jordan Walke", text: "This is *another* comment"}
 ];
 
+var OverallForm = React.createClass({
+
+  render: function() {
+    return(
+      <div className="hi">
+        <AddressInput />
+        <PriceInput />
+        <RatingInput />
+      </div>
+    )
+  }
+})
+
+var AddressInput = React.createClass({
+  render: function() {
+    return(
+      <form className="addressForm">
+        <input type="text" placeholder="Street Address" />
+        <input type="text" placeholder="City"/>
+        <input type="text" placeholder="State" />
+        <input type="text" placeholder="ZipCode"/>
+      </form>
+    )
+  }
+});
+
+var PriceInput = React.createClass({
+  render: function() {
+    return (
+      <form className="priceForm">
+        <input type="radio" name="price" value="oneDollar" />$ 
+        <input type="radio" name="price" value="twoDollar" />$$ 
+        <input type="radio" name="price" value="threeDollar" />$$$ 
+        <input type="radio" name="price" value="fourDollar" />$$$$ 
+      </form>
+    )
+  }
+});
+
+var RatingInput = React.createClass({
+
+  render: function() {
+    return (
+      <form>
+        <input type="range" value="3" min="0.0" max="5.0" step="1" />
+      </form>
+    )
+  }
+});
+
+var NoLink = React.createClass({
+  getInitialState: function() {
+    return {message: 'Hello!'};
+  },
+  handleChange: function(event) {
+    this.setState({message: event.target.value});
+  },
+  render: function() {
+    var message = this.state.message;
+    return <input type="text" value={message} onChange={this.handleChange} />;
+  }
+});
+
 var Comment = React.createClass({
   render: function() {
     var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
@@ -63,7 +126,8 @@ var CommentBox = React.createClass({
 
 React.render(
   //React.createElement(CommentBox, null),
-  <CommentBox data={data} />,
+  //<CommentBox data={data} />,
   //<CommentBox url="comments.json" />,
+  <OverallForm />,
   document.getElementById('content')
 );
