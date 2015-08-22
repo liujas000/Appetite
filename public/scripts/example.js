@@ -11,6 +11,8 @@ var OverallForm = React.createClass({
         <AddressInput />
         <PriceInput />
         <RatingInput />
+        <DistanceInput />
+        <CategoryInput />
       </div>
     )
   }
@@ -46,9 +48,53 @@ var RatingInput = React.createClass({
 
   render: function() {
     return (
-      <form>
+      <form className="ratingForm">
         <input type="range" value="3" min="0.0" max="5.0" step="1" />
       </form>
+    )
+  }
+});
+
+var DistanceInput = React.createClass({
+
+  render: function() {
+    return (
+      <form className="distanceForm">
+        <input type="range" value="3" min="0.0" max="5" step="1" />
+      </form>
+    )
+  }
+});
+
+var CategoryList = React.createClass({
+  render: function() {
+    return (
+      <h3> hi mom </h3>
+    )
+  }
+});
+
+var CategoryForm = React.createClass({
+  render: function() {
+    return (
+      <form className="categoryForm">
+        <input type="text" placeholder="Mexican, Vegetarian..."/>
+        <input type="submit" value="Enter" />
+      </form>
+    )
+  }
+});
+
+var CategoryInput = React.createClass({
+  getInitialState: function() {
+    return {data: []};
+  },
+  render: function() {
+    return (
+      <div className="categoryDiv">
+        <CategoryForm />
+        <CategoryList />
+      </div>
     )
   }
 });
