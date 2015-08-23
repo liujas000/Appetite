@@ -1,20 +1,31 @@
-var data = [
-  {author: "Pete Hunt", text: "This is one comment"},
-  {author: "Jordan Walke", text: "This is *another* comment"}
-];
 
 var OverallForm = React.createClass({
 
+  getInitialState: function() {
+    return {
+      address: "",
+      price: "oneDollar",
+      rating: 3,
+      distance: 3,
+      categories: []
+    };
+  },
+
+  formSubmit: function(e) {
+    e.preventDefault();
+    alert('you are poop');
+  },
+
   render: function() {
     return(
-      <div className="hi">
+      <div className="informationDiv">
         <AddressInput />
         <PriceInput />
         <RatingInput />
         <DistanceInput />
         <CategoryInput />
 
-        <form className="submitForm">
+        <form className="submitForm" onSubmit={this.formSubmit}>
           <input type="submit" value="Find 3 Restaurants" />
         </form>
       </div>
@@ -23,40 +34,75 @@ var OverallForm = React.createClass({
 })
 
 var AddressInput = React.createClass({
+
+  submitHandler: function(e) {
+    e.preventDefault();
+    var street = React.findDOMNode(this.refs.street).value.trim();
+    var city = React.findDOMNode(this.refs.city).value.trim();
+    var state = React.findDOMNode(this.refs.state).value.trim();
+    var zipcode = React.findDOMNode(this.refs.zipcode).value.trim();
+    if(!street | !city | !state | !zipcode) {
+      alert("incomplete form");
+      return;
+    } 
+    React.findDOMNode(this.refs.street).value = '';
+    React.findDOMNode(this.refs.city).value = '';
+    React.findDOMNode(this.refs.state).value = '';
+    React.findDOMNode(this.refs.zipcode).value = '';
+  
+
+  },
+
   render: function() {
     return(
-      <form className="addressForm">
-        <input type="text" placeholder="Street Address" />
-        <input type="text" placeholder="City"/>
-        <input type="text" placeholder="State" />
-        <input type="text" placeholder="ZipCode"/>
+      <form className="addressForm" onSubmit={this.submitHandler} >
+        <input type="text" placeholder="Street Address" ref="street"/>
+        <input type="text" placeholder="City" ref="city"/>
+        <input type="text" placeholder="State" ref="state"/>
+        <input type="text" placeholder="ZipCode" ref="zipcode"/>
+        <input type="submit" value="Get Lat Long" />
       </form>
     )
   }
 });
 
 var PriceInput = React.createClass({
+
+  handleChange: function(event) {
+    event.preventDefault();
+    console.log("event shit:", event.target.value);
+  },
+
   render: function() {
     return (
-      <form className="priceForm">
-        <input type="radio" name="price" value="oneDollar" />$ 
-        <input type="radio" name="price" value="twoDollar" />$$ 
-        <input type="radio" name="price" value="threeDollar" />$$$ 
-        <input type="radio" name="price" value="fourDollar" />$$$$ 
-      </form>
+      <select onChange={this.handleChange}>
+        <option value="oneDollar">$</option>
+        <option value="twoDollar">$$</option>
+        <option value="threeDollar">$$$</option>
+        <option value="fourDollar">$$$$</option>
+      </select>
     )
   }
 });
 
 var RatingInput = React.createClass({
 
+  getInitialState: function(event) {
+    return {rating: 2.5};
+  },
+
+  handleChange: function(event) {
+    event.preventDefault();
+    this.setState({rating: event.target.value})
+  },
+
   render: function() {
     return (
       <div>
-        Minimum Rating
-        <form className="ratingForm">
-          <input type="range" value="3" min="0.0" max="5.0" step="1" />
-        </form>
+        Minimum Rating- {this.state.rating} stars
+        <div>
+          <input type="range" defaultValue={this.state.rating} min="0.0" max="5.0" step="0.5" onChange={this.handleChange}/>
+        </div>
       </div>
     )
   }
@@ -64,13 +110,22 @@ var RatingInput = React.createClass({
 
 var DistanceInput = React.createClass({
 
+  getInitialState: function(event) {
+    return {distance: 1};
+  },
+
+  handleChange: function(event) {
+    event.preventDefault();
+    this.setState({distance: event.target.value})
+  },
+
   render: function() {
     return (
       <div>
-        Maximum Distance (mi)
-        <form className="distanceForm">
-          <input type="range" value="3" min="0.0" max="5" step="1" />
-        </form>
+        Maximum Distance- {this.state.distance} miles
+        <div>
+          <input type="range" defaultValue={this.state.distance} min="0.0" max="10" step=".5" onChange={this.handleChange}/>
+        </div>
       </div>
     )
   }
@@ -80,9 +135,12 @@ var CategoryInput = React.createClass({
 
   handleCategorySubmit: function(e) {
     var categories = this.state.data;
-    categories.push(e.text);
-    this.setState({data: categories});
-    console.log(categories);
+    var text = e.text.toLowerCase();
+    if(categories.indexOf(text) === -1) {
+      categories.push(text);
+      this.setState({data: categories});
+      console.log(categories);
+    }
   },
 
   getInitialState: function() {
@@ -137,9 +195,15 @@ var CategoryList = React.createClass({
 });
 
 var Category2 = React.createClass({
+
+  handleClick: function(e) {
+    e.preventDefault();
+    alert("shit was clicked");
+  },
+
   render: function() {
     return (
-      <p> {this.props.text} </p>
+      <p onClick={this.handleClick} value={this.props.text}> {this.props.text} </p>
     )
   }
 });
@@ -149,3 +213,4 @@ React.render(
   <OverallForm />,
   document.getElementById('content')
 );
+
