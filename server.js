@@ -29,10 +29,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/comments.json', function(req, res) {
-  yelp.search({term: "food", location: "Montreal"}, function(error, data) {
+  yelp.search({term: "food", location: "4334 17th Street San Francisco CA 94114"}, function(error, data) {
     console.log(error);
     console.log(data);
-    res.send(data.pretty());
+    res.send(data);
   });
   // fs.readFile('comments.json', function(err, data) {
   //   res.setHeader('Cache-Control', 'no-cache');
@@ -41,7 +41,21 @@ app.get('/comments.json', function(req, res) {
 });
 
 app.post('/getRestaurants', function(req, res) {
-  res.send('dis is a post');
+
+  yelp.search({
+    term: req.body.term,
+    sort: req.body.sort, 
+    location: req.body.location, 
+    radius_filter: req.body.radius_filter,
+    category_filter: req.body.category_filter    
+  }, function(error, data) {
+    if(error) {
+      console.log(error);
+      res.send(500);
+    } else {
+      res.status(200).send(data);
+    }
+  })
   // fs.readFile('comments.json', function(err, data) {
   //   var comments = JSON.parse(data);
   //   comments.push(req.body);

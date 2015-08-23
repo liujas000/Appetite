@@ -1,5 +1,29 @@
 
-var OverallForm = React.createClass({
+var OverallElement = React.createClass({
+
+  getInitialState: function() {
+    return {name: ['Joey', 'Yugi', 'Kaiab']};
+  },
+
+  showRestaurants: function(arr) {
+    var currentArr = this.state.name;
+    for(var i = 0; i < 3; i++) {
+      currentArr.push(arr[i].name);
+    }
+    this.setState({currentArr: name});
+  },
+
+  render: function() {
+    return (
+      <div>
+        <SearchForm url="getRestaurants" showRestaurants={this.showRestaurants}/>
+        {this.state.name}
+      </div>
+    )
+  }
+});
+
+var SearchForm = React.createClass({
 
   getInitialState: function() {
     return {
@@ -28,7 +52,35 @@ var OverallForm = React.createClass({
 
   formSubmit: function(e) {
     e.preventDefault();
-    console.log("state:", this.state);
+    if(!this.state.address) {
+      alert('enter an address');
+      return;
+    }
+    var meters_distance = this.state.distance * 1609.34; //Convert from miles to meters
+    var categoryString = this.state.categories.join(','); //Comma-seperated categories
+    var searchQuery = {
+      term: 'food',
+      sort: 2,
+      location: this.state.address,
+      radius_filter: meters_distance,
+      category_filter: categoryString,
+    };
+    alert('making ajax query');
+    $.ajax({
+      url: this.props.url,
+      dataType: 'json',
+      type: 'POST',
+      data: searchQuery,
+      success: function(data) {
+        alert('success bitches');
+        //console.log(data);
+        console.log(data.businesses);
+        this.props.showRestaurants(data.businesses);
+      }.bind(this),
+      error: function(xhr, status, err) {
+        console.error(this.props.url, status, err.toString());
+      }.bind(this)
+    })
   },
 
   render: function() {
@@ -46,7 +98,7 @@ var OverallForm = React.createClass({
       </div>
     )
   }
-})
+});
 
 var AddressInput = React.createClass({
 
@@ -157,7 +209,6 @@ var CategoryInput = React.createClass({
   removeEntry: function(e) {
 
     var categories = this.state.data.filter(function(category, index) {
-      console.log("category:", category, "index:", index);
       return category !== e;
     })
     this.setState({data: categories});
@@ -239,7 +290,7 @@ var Category2 = React.createClass({
 });
 
 React.render(
-  <OverallForm />,
+  <OverallElement />,
   document.getElementById('content')
 );
 
