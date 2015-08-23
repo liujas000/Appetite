@@ -11,19 +11,34 @@ var OverallForm = React.createClass({
     };
   },
 
+  updateQuery: function(address, price, rating, distance, categories) {
+
+    if(address) {
+      this.setState({address: address});
+    } else if (price) {
+      this.setState({price: price});
+    } else if (rating) {
+      this.setState({rating: rating});
+    } else if (distance) {
+      this.setState({distance: distance});
+    } else if(categories) {
+      this.setState({categories: categories});
+    } 
+  },
+
   formSubmit: function(e) {
     e.preventDefault();
-    
+    console.log("state:", this.state);
   },
 
   render: function() {
     return(
       <div className="informationDiv">
-        <AddressInput />
-        <PriceInput />
-        <RatingInput />
-        <DistanceInput />
-        <CategoryInput />
+        <AddressInput updateQuery={this.updateQuery}/>
+        <PriceInput updateQuery={this.updateQuery}/>
+        <RatingInput updateQuery={this.updateQuery}/>
+        <DistanceInput updateQuery={this.updateQuery}/>
+        <CategoryInput updateQuery={this.updateQuery}/>
 
         <form className="submitForm" onSubmit={this.formSubmit}>
           <input type="submit" value="Find 3 Restaurants" />
@@ -47,7 +62,7 @@ var AddressInput = React.createClass({
     var zipcode = React.findDOMNode(this.refs.zipcode).value.trim();
     var result = street + ' ' + city + ' ' + state + ' ' + zipcode;
     this.setState({fullAddress: result});
-    console.log(result);
+    this.props.updateQuery(result);
   },
 
   render: function() {
@@ -67,7 +82,8 @@ var PriceInput = React.createClass({
 
   handleChange: function(event) {
     event.preventDefault();
-    console.log("event shit:", event.target.value);
+    var price = event.target.value;
+    this.props.updateQuery(undefined, price);
   },
 
   render: function() {
@@ -90,7 +106,9 @@ var RatingInput = React.createClass({
 
   handleChange: function(event) {
     event.preventDefault();
-    this.setState({rating: event.target.value})
+    var rating = event.target.value;
+    this.setState({rating: rating});
+    this.props.updateQuery(undefined, undefined, rating);
   },
 
   render: function() {
@@ -113,7 +131,9 @@ var DistanceInput = React.createClass({
 
   handleChange: function(event) {
     event.preventDefault();
-    this.setState({distance: event.target.value})
+    var distance = event.target.value;
+    this.setState({distance: distance});
+    this.props.updateQuery(undefined, undefined, undefined, distance);
   },
 
   render: function() {
@@ -141,6 +161,7 @@ var CategoryInput = React.createClass({
       return category !== e;
     })
     this.setState({data: categories});
+    this.props.updateQuery(undefined, undefined, undefined, undefined, categories);
   },
 
   handleCategorySubmit: function(e) {
@@ -149,7 +170,7 @@ var CategoryInput = React.createClass({
     if(categories.indexOf(text) === -1) {
       categories.push(text);
       this.setState({data: categories});
-      console.log(categories);
+      this.props.updateQuery(undefined, undefined, undefined, undefined, categories);
     }
   },
 
