@@ -66,114 +66,68 @@ var DistanceInput = React.createClass({
   }
 });
 
-var CategoryList = React.createClass({
+var CategoryInput = React.createClass({
+
+  handleCategorySubmit: function(e) {
+    var categories = this.state.data;
+    categories.push(e.text);
+    this.setState({data: categories});
+    console.log(categories);
+  },
+
+  getInitialState: function() {
+    return {data: []};
+  },
+
   render: function() {
     return (
-      <h3> hi mom </h3>
+      <div className="categoryDiv" >
+        <CategoryForm onCategorySubmit={this.handleCategorySubmit} />
+        <CategoryList data = {this.state.data}/>
+      </div>
     )
   }
 });
 
+var CategoryList = React.createClass({
+  render: function() {
+    var categoryNodes = this.props.data.map(function(category, index) {
+      return (
+        <h3> {category} </h3>
+      );
+    });
+    return (
+      <div className="commentList">
+        {categoryNodes}
+      </div>
+    );
+  }
+});
+
 var CategoryForm = React.createClass({
+
+  handleSubmit: function(e) {
+    e.preventDefault();
+    var text = React.findDOMNode(this.refs.categoryText).value.trim();
+    if (!text) {
+      return;
+    }
+    this.props.onCategorySubmit({text: text});
+    React.findDOMNode(this.refs.categoryText).value = '';
+  },
+
   render: function() {
     return (
-      <form className="categoryForm">
-        <input type="text" placeholder="Mexican, Vegetarian..."/>
+      <form className="categoryForm" onSubmit={this.handleSubmit} >
+        <input type="text" placeholder="Mexican, Vegetarian..." ref="categoryText" />
         <input type="submit" value="Enter" />
       </form>
     )
   }
 });
 
-var CategoryInput = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  render: function() {
-    return (
-      <div className="categoryDiv">
-        <CategoryForm />
-        <CategoryList />
-      </div>
-    )
-  }
-});
-
-var NoLink = React.createClass({
-  getInitialState: function() {
-    return {message: 'Hello!'};
-  },
-  handleChange: function(event) {
-    this.setState({message: event.target.value});
-  },
-  render: function() {
-    var message = this.state.message;
-    return <input type="text" value={message} onChange={this.handleChange} />;
-  }
-});
-
-var Comment = React.createClass({
-  render: function() {
-    var rawMarkup = marked(this.props.children.toString(), {sanitize: true});
-    return (
-      <div className="comment">
-        <h2 className="commentAuthor">
-          {this.props.author}
-        </h2>
-        <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
-      </div>
-    );
-  }
-});
-
-var CommentList = React.createClass({
-  render: function() {
-    var commentNodes = this.props.data.map(function (comment) {
-      return (
-        <Comment author={comment.author}>
-          {comment.text}
-        </Comment>
-      );
-    });
-    return (
-      <div className="commentList">
-        {commentNodes}
-      </div>
-    );
-  }
-});
-
-var CommentForm = React.createClass({
-  render: function() {
-    return (
-      <form className="commentForm">
-        <input type="text" placeholder="Your name" />
-        <input type="text" placeholder="Say something..." />
-        <input type="submit" value="Post" />
-      </form>
-    );
-  }
-});
-
-var CommentBox = React.createClass({
-  getInitialState: function() {
-    return {data: []};
-  },
-  render: function() {
-    return (
-      <div className="commentBox">
-        <h1>Comments</h1>
-        <CommentList data={this.state.data} />
-        <CommentForm />
-      </div>
-    );
-  }
-});
 
 React.render(
-  //React.createElement(CommentBox, null),
-  //<CommentBox data={data} />,
-  //<CommentBox url="comments.json" />,
   <OverallForm />,
   document.getElementById('content')
 );
