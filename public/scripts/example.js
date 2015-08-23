@@ -13,6 +13,10 @@ var OverallForm = React.createClass({
         <RatingInput />
         <DistanceInput />
         <CategoryInput />
+
+        <form className="submitForm">
+          <input type="submit" value="Find 3 Restaurants" />
+        </form>
       </div>
     )
   }
@@ -48,9 +52,12 @@ var RatingInput = React.createClass({
 
   render: function() {
     return (
-      <form className="ratingForm">
-        <input type="range" value="3" min="0.0" max="5.0" step="1" />
-      </form>
+      <div>
+        Minimum Rating
+        <form className="ratingForm">
+          <input type="range" value="3" min="0.0" max="5.0" step="1" />
+        </form>
+      </div>
     )
   }
 });
@@ -59,9 +66,12 @@ var DistanceInput = React.createClass({
 
   render: function() {
     return (
-      <form className="distanceForm">
-        <input type="range" value="3" min="0.0" max="5" step="1" />
-      </form>
+      <div>
+        Maximum Distance (mi)
+        <form className="distanceForm">
+          <input type="range" value="3" min="0.0" max="5" step="1" />
+        </form>
+      </div>
     )
   }
 });
@@ -83,24 +93,9 @@ var CategoryInput = React.createClass({
     return (
       <div className="categoryDiv" >
         <CategoryForm onCategorySubmit={this.handleCategorySubmit} />
-        <CategoryList data = {this.state.data}/>
+        <CategoryList data={this.state.data}/>
       </div>
     )
-  }
-});
-
-var CategoryList = React.createClass({
-  render: function() {
-    var categoryNodes = this.props.data.map(function(category, index) {
-      return (
-        <h3> {category} </h3>
-      );
-    });
-    return (
-      <div className="commentList">
-        {categoryNodes}
-      </div>
-    );
   }
 });
 
@@ -120,8 +115,31 @@ var CategoryForm = React.createClass({
     return (
       <form className="categoryForm" onSubmit={this.handleSubmit} >
         <input type="text" placeholder="Mexican, Vegetarian..." ref="categoryText" />
-        <input type="submit" value="Enter" />
+        <input type="submit" value="Enter Category" />
       </form>
+    )
+  }
+});
+
+var CategoryList = React.createClass({
+  render: function() {
+    var categoryNodes = this.props.data.map(function(category, index) {
+      return (
+        <Category2 text={category} key={index}/>  
+      )
+    });
+    return (
+      <div className="commentList">
+        {categoryNodes}
+      </div>
+    );
+  }
+});
+
+var Category2 = React.createClass({
+  render: function() {
+    return (
+      <p> {this.props.text} </p>
     )
   }
 });
