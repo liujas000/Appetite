@@ -35,32 +35,29 @@ var OverallForm = React.createClass({
 
 var AddressInput = React.createClass({
 
-  submitHandler: function(e) {
+  getInitialState: function(e) {
+    return {fullAddress : ''};
+  },
+
+  handleChange: function(e) {
     e.preventDefault();
     var street = React.findDOMNode(this.refs.street).value.trim();
     var city = React.findDOMNode(this.refs.city).value.trim();
     var state = React.findDOMNode(this.refs.state).value.trim();
     var zipcode = React.findDOMNode(this.refs.zipcode).value.trim();
-    if(!street | !city | !state | !zipcode) {
-      alert("incomplete form");
-      return;
-    } 
-    React.findDOMNode(this.refs.street).value = '';
-    React.findDOMNode(this.refs.city).value = '';
-    React.findDOMNode(this.refs.state).value = '';
-    React.findDOMNode(this.refs.zipcode).value = '';
-  
-
+    var result = street + ' ' + city + ' ' + state + ' ' + zipcode;
+    this.setState({fullAddress: result});
+    console.log(result);
   },
 
   render: function() {
     return(
-      <form className="addressForm" onSubmit={this.submitHandler} >
+      <form className="addressForm" onChange={this.handleChange} >
         <input type="text" placeholder="Street Address" ref="street"/>
         <input type="text" placeholder="City" ref="city"/>
         <input type="text" placeholder="State" ref="state"/>
         <input type="text" placeholder="ZipCode" ref="zipcode"/>
-        <input type="submit" value="Get Lat Long" />
+        {this.state.fullAddress}
       </form>
     )
   }
