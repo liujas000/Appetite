@@ -51,7 +51,7 @@ app.post('/getRestaurants', function(req, res) {
   }, function(error, data) {
     if(error) {
       console.log(error);
-      res.send(500);
+      res.sendStatus(500);
     } else {
       res.status(200).send(data);
     }

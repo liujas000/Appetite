@@ -2,7 +2,7 @@
 var OverallElement = React.createClass({
 
   getInitialState: function() {
-    return {name: ['Joey', 'Yugi', 'Kaiab']};
+    return {name: []};
   },
 
   showRestaurants: function(arr) {
