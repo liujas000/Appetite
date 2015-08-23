@@ -5,15 +5,15 @@ var OverallForm = React.createClass({
     return {
       address: "",
       price: "oneDollar",
-      rating: 3,
-      distance: 3,
+      rating: 2.5,
+      distance: 1,
       categories: []
     };
   },
 
   formSubmit: function(e) {
     e.preventDefault();
-    alert('you are poop');
+    
   },
 
   render: function() {
@@ -96,7 +96,7 @@ var RatingInput = React.createClass({
   render: function() {
     return (
       <div>
-        Minimum Rating- {this.state.rating} stars
+        Minimum Rating: {this.state.rating} stars
         <div>
           <input type="range" defaultValue={this.state.rating} min="0.0" max="5.0" step="0.5" onChange={this.handleChange}/>
         </div>
@@ -119,7 +119,7 @@ var DistanceInput = React.createClass({
   render: function() {
     return (
       <div>
-        Maximum Distance- {this.state.distance} miles
+        Maximum Distance: {this.state.distance} miles
         <div>
           <input type="range" defaultValue={this.state.distance} min="0.0" max="10" step=".5" onChange={this.handleChange}/>
         </div>
@@ -129,6 +129,19 @@ var DistanceInput = React.createClass({
 });
 
 var CategoryInput = React.createClass({
+
+  getInitialState: function() {
+    return {data: []};
+  },
+
+  removeEntry: function(e) {
+
+    var categories = this.state.data.filter(function(category, index) {
+      console.log("category:", category, "index:", index);
+      return category !== e;
+    })
+    this.setState({data: categories});
+  },
 
   handleCategorySubmit: function(e) {
     var categories = this.state.data;
@@ -140,15 +153,11 @@ var CategoryInput = React.createClass({
     }
   },
 
-  getInitialState: function() {
-    return {data: []};
-  },
-
   render: function() {
     return (
       <div className="categoryDiv" >
         <CategoryForm onCategorySubmit={this.handleCategorySubmit} />
-        <CategoryList data={this.state.data}/>
+        <CategoryList data={this.state.data} removeEntry={this.removeEntry}/>
       </div>
     )
   }
@@ -177,10 +186,12 @@ var CategoryForm = React.createClass({
 });
 
 var CategoryList = React.createClass({
+
   render: function() {
+    var removeFunc  = this.props.removeEntry;
     var categoryNodes = this.props.data.map(function(category, index) {
       return (
-        <Category2 text={category} key={index}/>  
+        <Category2 text={category} key={index} removeEntry={removeFunc}/>  
       )
     });
     return (
@@ -195,16 +206,16 @@ var Category2 = React.createClass({
 
   handleClick: function(e) {
     e.preventDefault();
-    alert("shit was clicked");
+    console.log("clicked on:", e.target.innerHTML);
+    this.props.removeEntry(e.target.innerHTML);
   },
 
   render: function() {
     return (
-      <p onClick={this.handleClick} value={this.props.text}> {this.props.text} </p>
+      <div value={this.props.text} onClick={this.handleClick}> {this.props.text} </div>
     )
   }
 });
-
 
 React.render(
   <OverallForm />,
