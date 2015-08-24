@@ -7,7 +7,7 @@ var OverallElement = React.createClass({
 
   showRestaurants: function(arr) {
     var currentArr = this.state.name;
-    for(var i = 0; i < 3; i++) {
+    for(var i = 0; i < arr.length; i++) {
       currentArr.push(arr[i].name);
     }
     this.setState({currentArr: name});
@@ -28,7 +28,7 @@ var SearchForm = React.createClass({
   getInitialState: function() {
     return {
       address: "",
-      price: "oneDollar",
+      price: 1,
       rating: 2.5,
       distance: 1,
       categories: []
@@ -64,6 +64,7 @@ var SearchForm = React.createClass({
       location: this.state.address,
       radius_filter: meters_distance,
       category_filter: categoryString,
+      price: this.state.price
     };
     alert('making ajax query');
     $.ajax({
@@ -73,9 +74,8 @@ var SearchForm = React.createClass({
       data: searchQuery,
       success: function(data) {
         alert('success bitches');
-        //console.log(data);
-        console.log(data.businesses);
-        this.props.showRestaurants(data.businesses);
+        console.log('data', data);
+        this.props.showRestaurants(data.arr);
       }.bind(this),
       error: function(xhr, status, err) {
         console.error(this.props.url, status, err.toString());
@@ -140,12 +140,15 @@ var PriceInput = React.createClass({
 
   render: function() {
     return (
-      <select onChange={this.handleChange}>
-        <option value="oneDollar">$</option>
-        <option value="twoDollar">$$</option>
-        <option value="threeDollar">$$$</option>
-        <option value="fourDollar">$$$$</option>
-      </select>
+      <div>
+        Max Price: 
+        <select onChange={this.handleChange}>
+          <option value={1}>$</option>
+          <option value={2}>$$</option>
+          <option value={3}>$$$</option>
+          <option value={4}>$$$$</option>
+        </select>
+      </div>
     )
   }
 });

@@ -14,6 +14,8 @@ var fs = require('fs');
 var path = require('path');
 var express = require('express');
 var bodyParser = require('body-parser');
+var request = require('request');
+var when = require('when');
 var yelp = require("yelp").createClient({
     "consumer_key": "jIYW8uxC8VurEH7yOWdSzA",
     "consumer_secret":  "MxyA-cFMyW7pex9Ps0TAJ0_KIv4",
@@ -23,7 +25,6 @@ var yelp = require("yelp").createClient({
 var app = express();
 
 app.set('port', (process.env.PORT || 3000));
-
 app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -34,37 +35,82 @@ app.get('/comments.json', function(req, res) {
     console.log(data);
     res.send(data);
   });
-  // fs.readFile('comments.json', function(err, data) {
-  //   res.setHeader('Cache-Control', 'no-cache');
-  //   res.json(JSON.parse(data));
-  // });
 });
+
+//http://www.yelp.com/search?find_desc=Food&find_loc=444+Townsend+St%2C+San+Francisco%2C+CA&ns=1#start=0&attrs=RestaurantsPriceRange2.4
+
 
 app.post('/getRestaurants', function(req, res) {
 
   yelp.search({
     term: req.body.term,
+    limit: 20,
     sort: req.body.sort, 
     location: req.body.location, 
     radius_filter: req.body.radius_filter,
-    category_filter: req.body.category_filter    
+    category_filter: req.body.category_filter
+    //attrs: 'RestaurantsPriceRange2.4'    
   }, function(error, data) {
     if(error) {
       console.log(error);
       res.sendStatus(500);
     } else {
-      res.status(200).send(data);
+      var result = findThreeBasic(data.businesses, req.body);
+      console.log('result is:', result);
+      res.status(200).send({arr: result});
+
+      // when(findThreePromise(data.businesses, req.body))
+      //   .then(function(arr) {
+      //     res.status(200).send(arr);
+      //   })
+      //   .otherwise(function(err) {
+      //     res.status(500).send(err);
+      //   })
     }
   })
-  // fs.readFile('comments.json', function(err, data) {
-  //   var comments = JSON.parse(data);
-  //   comments.push(req.body);
-  //   fs.writeFile('comments.json', JSON.stringify(comments, null, 4), function(err) {
-  //     res.setHeader('Cache-Control', 'no-cache');
-  //     res.json(comments);
-  //   });
-  // });
 });
+
+findThreeBasic = function(businesses, conditions) {
+  var result = [];
+  var chosen = [];
+  console.log("businesses:", businesses);
+  while(result.length < 3) {
+    //Pick a random int from 0 to businesses.length - 1
+    var index = Math.floor(Math.random() * businesses.length);
+    var next_business = businesses[index];
+    console.log("next businesses!")
+    var name = next_business.name;
+    var site = next_business.url;
+    if(chosen.indexOf(name) === -1) {
+      result.push(next_business);
+      chosen.push(name);
+      businesses.splice(index, 1);
+    }
+  }
+  return result;
+}
+
+
+findThreePromise = function(businesses, conditions) {
+  var deferred = when.defer();
+  var result = [];
+  var chosen = [];
+  while(result.length < 3) {
+    //Pick a random int from 0 to businesses.length - 1
+    var index = Math.floor(Math.random() * businesses.length);
+    var next_business = businesses[index];
+    var name = next_business.name;
+    var site = next_business.url;
+    if(chosen.indexOf(name) === -1) {
+      result.push(next_business);
+      chosen.push(name);
+      businesses.splice(index, 1);
+    }
+    //Make a request to the site
+    //Parse for price
+  }
+  return deferred.promise;
+}
 
 
 app.listen(app.get('port'), function() {
