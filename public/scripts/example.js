@@ -45,10 +45,16 @@ var RestaurantList = React.createClass({
 var Restaurant = React.createClass({
 
   render: function() {
+    var categoryStr = this.props.data.categories.length > 0 ? this.props.data.categories[0][0] : "";
+    for(var i = 1; i < this.props.data.categories.length; i++) {
+      categoryStr += (", " +  this.props.data.categories[i][0]);
+    }
     return (
       <div id={this.props.data.name}>
-        <h1>{this.props.data.name} </h1> 
+        <h1>{this.props.data.name} ({categoryStr})</h1> 
+
         <img src={this.props.data.image_url} />
+        <h3>{this.props.data.snippet_text} </h3>
       </div>
     )
   }
