@@ -2,22 +2,53 @@
 var OverallElement = React.createClass({
 
   getInitialState: function() {
-    return {name: []};
+    return {list: []};
   },
 
   showRestaurants: function(arr) {
-    var currentArr = this.state.name;
+    var currentArr = this.state.list;
     for(var i = 0; i < arr.length; i++) {
-      currentArr.push(arr[i].name);
+      currentArr.push(arr[i]);
+      console.log("Restaurant:", arr[i]);
     }
-    this.setState({currentArr: name});
+    this.setState({list: currentArr});
   },
 
   render: function() {
     return (
       <div>
         <SearchForm url="getRestaurants" showRestaurants={this.showRestaurants}/>
-        {this.state.name}
+        <RestaurantList data = {this.state.list} />
+      </div>
+    )
+  }
+});
+
+var RestaurantList = React.createClass({
+
+
+  render: function() {
+      var restaurantNodes = this.props.data.map(function(restaurant, index) {
+        console.log("trying to pass:", restaurant);
+        return (
+          <Restaurant data={restaurant} key={index} />  
+        )
+      });
+      return (
+        <div className="restaurantList">
+          {restaurantNodes}
+        </div>
+      );
+    }
+});
+
+var Restaurant = React.createClass({
+
+  render: function() {
+    return (
+      <div id={this.props.data.name}>
+        <h1>{this.props.data.name} </h1> 
+        <img src={this.props.data.image_url} />
       </div>
     )
   }
@@ -64,7 +95,8 @@ var SearchForm = React.createClass({
       location: this.state.address,
       radius_filter: meters_distance,
       category_filter: categoryString,
-      price: this.state.price
+      price: this.state.price,
+      rating: this.state.rating
     };
     alert('making ajax query');
     $.ajax({
@@ -74,10 +106,13 @@ var SearchForm = React.createClass({
       data: searchQuery,
       success: function(data) {
         alert('success bitches');
-        console.log('data', data);
+        console.log('data', data.arr);
+        console.log(1);
         this.props.showRestaurants(data.arr);
+        console.log(2);
       }.bind(this),
       error: function(xhr, status, err) {
+        alert('failed');
         console.error(this.props.url, status, err.toString());
       }.bind(this)
     })
@@ -270,7 +305,7 @@ var CategoryList = React.createClass({
       )
     });
     return (
-      <div className="commentList">
+      <div className="categoryList">
         {categoryNodes}
       </div>
     );

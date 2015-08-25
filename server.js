@@ -39,7 +39,6 @@ app.get('/comments.json', function(req, res) {
 
 //http://www.yelp.com/search?find_desc=Food&find_loc=444+Townsend+St%2C+San+Francisco%2C+CA&ns=1#start=0&attrs=RestaurantsPriceRange2.4
 
-
 app.post('/getRestaurants', function(req, res) {
 
   yelp.search({
@@ -49,7 +48,6 @@ app.post('/getRestaurants', function(req, res) {
     location: req.body.location, 
     radius_filter: req.body.radius_filter,
     category_filter: req.body.category_filter
-    //attrs: 'RestaurantsPriceRange2.4'    
   }, function(error, data) {
     if(error) {
       console.log(error);
@@ -57,6 +55,10 @@ app.post('/getRestaurants', function(req, res) {
     } else {
       var result = findThreeBasic(data.businesses, req.body);
       console.log('result is:', result);
+      if(!result) {
+        res.status(500).send({msg: "Did not fit the conditions"});
+        return;
+      }
       res.status(200).send({arr: result});
 
       // when(findThreePromise(data.businesses, req.body))
@@ -73,7 +75,11 @@ app.post('/getRestaurants', function(req, res) {
 findThreeBasic = function(businesses, conditions) {
   var result = [];
   var chosen = [];
-  console.log("businesses:", businesses);
+  businesses = businesses.filter(function(elem) {
+    return elem.rating >= conditions.rating;
+  });
+  if(businesses.length === 0)
+    return undefined;
   while(result.length < 3) {
     //Pick a random int from 0 to businesses.length - 1
     var index = Math.floor(Math.random() * businesses.length);

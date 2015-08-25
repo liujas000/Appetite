@@ -1,0 +1,17 @@
+TODO
+Filter Restaurants, with Rating
+Find best way to display restaurant choices
+Possibly link to a updwn.co ???
+Yelp categories--how to get all the categories either by query or storing
+Work on the UI (cries)
+
+
+**Yelp's API doesn't include the price (cries)
+	Solution: Pick a restaurant, and make a get request to its page
+	Parse the HTML, looking for something like
+		<span class="business-attribute price-range" itemprop="priceRange">$$</span>
+	Get the price, and choose the restaurant if the price falls under conditions.
+	Continue 3 times
+	
+Yelp is limited to return 20 restaurants.
+-Make calls until >50 or done
